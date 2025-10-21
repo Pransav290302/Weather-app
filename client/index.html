@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Weather App by Pransav Patel</title>
+  <link rel="stylesheet" href="theme.css"/>
+  <link rel="preconnect" href="https://{s}.tile.openstreetmap.org">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+</head>
+<body>
+  <header class="app-header">
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+      <span class="theme-toggle-icon" id="theme-icon">🌙</span>
+      <span class="theme-toggle-text" id="theme-text">Dark Mode</span>
+    </button>
+    <button class="info-button" id="info-button" aria-label="About PM Accelerator">
+      <span class="info-icon">ℹ️</span>
+      <span class="info-text">About</span>
+    </button>
+    <h1>Weather App</h1>
+    <p class="subtitle">5‑day forecast</p>
+    <p class="developer-credit">Developed by <strong>Pransav Patel</strong></p>
+  </header>
+
+  <div id="info-modal" class="modal hidden">
+    <div class="modal-content">
+      <button class="modal-close" id="modal-close">&times;</button>
+      <h2>About Product Manager Accelerator</h2>
+      <div class="modal-body">
+        <p>The <strong>Product Manager Accelerator Program</strong> is designed to support PM professionals through every stage of their careers. From students looking for entry-level jobs to Directors looking to take on a leadership role, our program has helped over hundreds of students fulfill their career aspirations.</p>
+        
+        <h3>🚀 Our Services:</h3>
+        
+        <div class="service-item">
+          <h4>PMA Pro</h4>
+          <p>End-to-end product manager job hunting program that helps you master FAANG-level Product Management skills, conduct unlimited mock interviews, and gain job referrals through our largest alumni network. 25% of our offers came from tier 1 companies and get paid as high as $800K/year.</p>
+        </div>
+        
+        <div class="service-item">
+          <h4>AI PM Bootcamp</h4>
+          <p>Gain hands-on AI Product Management skills by building a real-life AI product with a team of AI Engineers, data scientists, and designers. We will also help you launch your product with real user engagement using our 100,000+ PM community and social media channels.</p>
+        </div>
+        
+        <div class="service-item">
+          <h4>PMA Power Skills</h4>
+          <p>Designed for existing product managers to sharpen their product management skills, leadership skills, and executive presentation skills.</p>
+        </div>
+        
+        <div class="service-item">
+          <h4>PMA Leader</h4>
+          <p>We help you accelerate your product management career, get promoted to Director and product executive levels, and win in the board room.</p>
+        </div>
+        
+        <div class="service-item">
+          <h4>1:1 Resume Review</h4>
+          <p>We help you rewrite your killer product manager resume to stand out from the crowd, with an interview guarantee.</p>
+        </div>
+        
+        <div class="modal-links">
+          <a href="https://www.drnancyli.com/pmresume" target="_blank" class="btn">Free PM Resume Template</a>
+          <a href="https://www.youtube.com/c/drnancyli" target="_blank" class="btn secondary">YouTube Channel</a>
+          <a href="https://www.linkedin.com/company/product-manager-accelerator" target="_blank" class="btn secondary">LinkedIn Page</a>
+        </div>
+        
+        <p class="modal-footer">📱 Follow on Instagram: <strong>@drnancyli</strong></p>
+        <p class="modal-footer">🎓 Over 500+ free training courses available!</p>
+      </div>
+    </div>
+  </div>
+
+  <main class="container">
+    <section class="card">
+      <h2>Check Now</h2>
+      <form id="create-form" class="grid2">
+        <label>Location
+          <input id="loc" name="location" type="text" placeholder="City, landmark, ZIP, or 'lat,lon'" required>
+        </label>
+        <div class="row">
+          <label>Start date
+            <input id="start" name="start_date" type="date" required>
+          </label>
+          <label>End date
+            <input id="end" name="end_date" type="date" required>
+          </label>
+        </div>
+        <div class="row">
+          <button class="btn" type="submit">Create + Fetch</button>
+          <button class="btn secondary" type="button" id="use-my-location">Use My Location</button>
+        </div>
+        
+      </form>
+      <div id="create-error" class="error hidden"></div>
+    </section>
+
+    <section class="card">
+      <h2>Saved Requests</h2>
+      <div class="toolbar">
+        <button class="btn" id="refresh">Refresh</button>
+        <div class="export-group">
+          <label>Export all:</label>
+          <a class="btn secondary" href="/api/exports/json" target="_blank">JSON</a>
+          <a class="btn secondary" href="/api/exports/csv" target="_blank">CSV</a>
+          <a class="btn secondary" href="/api/exports/md" target="_blank">Markdown</a>
+          <a class="btn secondary" href="/api/exports/pdf" target="_blank">PDF</a>
+        </div>
+      </div>
+      <table id="table">
+        <thead>
+          <tr>
+            <th>ID</th><th>Input</th><th>Resolved</th><th>Dates</th><th>Lat,Lon</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section class="grid2">
+      <section class="card">
+        <h2>Record Detail</h2>
+        <div id="detail">Select a record…</div>
+      </section>
+      <section class="card">
+        <h2>Map & Wiki</h2>
+        <div id="map"></div>
+        <div id="wiki"></div>
+      </section>
+    </section>
+
+    <section class="card">
+      <h2>Quick Current Weather and Forecast</h2>
+      <div id="quick" class="quick-grid">
+        <div>
+          <input id="q" type="text" placeholder="Try: Chicago or 60616 or 41.8781,-87.6298"/>
+          <button id="qbtn" class="btn">Get Weather</button>
+        </div>
+        <div id="quick-res"></div>
+      </div>
+    </section>
+
+    <section id="error" class="error hidden" role="alert"></section>
+  </main>
+
+  <footer class="footer">
+    <p><strong>Developed by Pransav Patel</strong></p>
+   
+    <p style="margin-top: 1rem;">
+      <a href="https://www.linkedin.com/company/product-manager-accelerator" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: 600;">Product Manager Accelerator</a>
+    </p>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="app.js" defer></script>
+</body>
+</html>
