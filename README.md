@@ -150,7 +150,5 @@ CREATE TABLE queries(
 
 - `PORT` - Server port (default: 3000)
 
-## License
 
-Private project
 
